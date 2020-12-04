@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace = "com.wangxiaolin.materials.mapper.UserMapper">
+    <!-- 查询表中所有的数据 -->
+    <select id="queryUserList" resultType="com.wangxiaolin.materials.entity.User" >
+        select * from user
+    </select>
+    <!-- 根据ID查询表数据,用于修改-->
+    <select id="getUserById" parameterType="Integer" resultType="com.wangxiaolin.materials.entity.User">
+        <!-- 数据库增加语句：#{}代表占位符 -->
+        select * from user where uId=#{uId}
+    </select>
+    <!-- 根据关键字keywords模糊查询,用于搜索功能-->
+    <select id="getUserByKeywords" parameterType="java.lang.String" resultType="com.wangxiaolin.materials.entity.User">
+        <!-- 数据库增加语句：#{}代表占位符 -->
+        select * from user where 1=1
+        <if test="Keywords!= null and Keywords!= ''">
+            AND uId LIKE concat('%',#{Keywords},'%') OR uName LIKE concat('%',#{Keywords},'%') OR uPwd LIKE concat('%',#{Keywords},'%') OR state LIKE concat('%',#{Keywords},'%') OR actualName LIKE concat('%',#{Keywords},'%') OR UserSex LIKE concat('%',#{Keywords},'%') OR introduce LIKE concat('%',#{Keywords},'%') OR image LIKE concat('%',#{Keywords},'%')
+        </if>
+    </select>
+    <!-- 登录查询 -->
+    <select id="loginCheck" parameterType="java.lang.String" resultType="com.wangxiaolin.materials.entity.User">
+        select * from user where uName=#{username}
+    </select>
+    <!-- 根据ID修改表中数据-->
+    <update id="updateUser" parameterType="com.wangxiaolin.materials.entity.User">
+        update user set uName = #{uName},state=#{state},actualName=#{actualName},UserSex=#{UserSex},introduce=#{introduce},image=#{image} where uId = #{uId}
+    </update>
+    <!-- 根据ID修改密码-->
+    <update id="updatePwd" parameterType="com.wangxiaolin.materials.entity.User">
+        update user set uPwd=#{uPwd} where uId = #{uId}
+    </update>
+    <!-- 根据ID修改状态-->
+    <update id="updateState" parameterType="com.wangxiaolin.materials.entity.User">
+        update user set state=#{state} where uId = #{uId}
+    </update>
+    <!-- 根据ID删除表数据 -->
+    <delete id="delUserById" parameterType="Integer">
+        delete from user where uId=#{uId}
+    </delete>
+    <!-- 根据IDs批量删除删除表数据 -->
+    <delete id="delUserByIds" parameterType="int">
+        delete from user where uId in
+        <foreach item="item" collection="uids" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+    <!-- 插入数据，这里ID是自动递增的，所以不需要插入 -->
+    <insert id="insertUser" parameterType="com.wangxiaolin.materials.entity.User" >
+        insert into user(uName,uPwd,state,actualName,UserSex,introduce,image) values(#{uName},#{uPwd},#{state},#{actualName},#{UserSex},#{introduce},#{image})
+    </insert>
+</mapper>

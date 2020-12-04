@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace = "com.wangxiaolin.materials.mapper.OutputrMapper">
+    <!-- 查询表中所有的数据 -->
+    <select id="queryOutputrList" resultType="com.wangxiaolin.materials.entity.Outputr" >
+        select * from outputr
+    </select>
+    <!-- 根据ID查询表数据,用于修改-->
+    <select id="getOutputrById" parameterType="Integer" resultType="com.wangxiaolin.materials.entity.Outputr">
+        <!-- 数据库增加语句：#{}代表占位符 -->
+        select * from outputr where Ono=#{Ono}
+    </select>
+    <!-- 根据关键字keywords模糊查询,用于搜索功能-->
+    <select id="getOutputrByKeywords" parameterType="java.lang.String" resultType="com.wangxiaolin.materials.entity.Outputr">
+        <!-- 数据库增加语句：#{}代表占位符 -->
+        select * from outputr where 1=1
+        <if test="Keywords!= null and Keywords!= ''">
+            AND outputr.Ono LIKE concat('%',#{Keywords},'%') OR outputr.Mid=(select material.Mid from material where material.Mname LIKE concat('%',#{Keywords},'%') ) OR outputr.Rid=(select repository.Rid from repository where repository.Rname LIKE concat('%',#{Keywords},'%')) OR  outputr.count LIKE concat('%',#{Keywords},'%') OR  outputr.value LIKE concat('%',#{Keywords},'%') OR outputr.dateTime  LIKE concat('%',#{Keywords},'%') OR outputr.user_Pid=(select person.Pid from person where person.Pname LIKE concat('%',#{Keywords},'%') )  OR outputr.deal_Pid=(select person.Pid from person where person.Pname LIKE concat('%',#{Keywords},'%') ) OR outputr.remark  LIKE concat('%',#{Keywords},'%')
+        </if>
+    </select>
+    <!-- 根据ID修改表中数据-->
+    <update id="updateOutputr" parameterType="com.wangxiaolin.materials.entity.Outputr">
+        update  outputr set  outputr.Mid = #{Mid},outputr.Rid=#{Rid},outputr.count=#{count},outputr.value=#{value},outputr.user_Pid=#{user_Pid},outputr.deal_Pid=#{deal_Pid},outputr.remark=#{remark} where Ono = #{Ono}
+    </update>
+    <!-- 根据ID删除表数据 -->
+    <delete id="delOutputrById" parameterType="Integer">
+        delete from outputr where Ono = #{Ono}
+    </delete>
+    <!-- 根据IDs批量删除删除表数据 -->
+    <delete id="delOutputrByIds" parameterType="int">
+        delete from outputr where Ono in
+        <foreach item="item" collection="Onos" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+    <!-- 插入数据，这里ID是自动递增的，所以不需要插入 -->
+    <insert id="insertOutputr" parameterType="com.wangxiaolin.materials.entity.Outputr" >
+        insert into outputr(outputr.Mid,outputr.Rid,outputr.count,outputr.value,outputr.user_Pid,outputr.deal_Pid,outputr.remark) values(#{Mid},#{Rid},#{count},#{value},#{user_Pid},#{deal_Pid},#{remark})
+    </insert>
+</mapper>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="UTF-8">
+    <title>欢迎页面-X-admin2.2</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+    <link rel="stylesheet" th:href="@{/css/font.css}" >
+    <link rel="stylesheet" th:href="@{/css/xadmin.css}">
+    <script type="text/javascript" th:src="@{/lib/layui/layui.js}" charset="utf-8"></script>
+    <script type="text/javascript" th:src="@{/js/xadmin.js}"></script>
+</head>
+
+<body>
+<div class="layui-fluid">
+    <div class="layui-row">
+        <form action="" method="post" class="layui-form layui-form-pane">
+            <div class="layui-form-item">
+                <label for="Mname" class="layui-form-label">
+                    <span class="x-red">*</span>物资名称
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="Mname" name="Mname" required="" lay-verify="required"
+                           autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="spec" class="layui-form-label">
+                    <span class="x-red">*</span>规格型号
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="spec" name="spec" required="" lay-verify="required"
+                           autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="category" class="layui-form-label">
+                    <span class="x-red">*</span>类别
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="category" name="category" required="" lay-verify="required"
+                           autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="unit" class="layui-form-label">
+                    <span class="x-red">*</span>计量单位
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="unit" name="unit" required="" lay-verify="required"
+                           autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="price" class="layui-form-label">
+                    <span class="x-red">*</span>单价
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="price" name="price" required="" lay-verify="required"
+                           autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <button class="layui-btn" lay-submit="" lay-filter="add">添加物资</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    layui.use(['form','layer'], function(){
+        $ = layui.jquery;
+        var form = layui.form
+            ,layer = layui.layer;
+
+        //监听提交
+        form.on('submit(add)', function(data){
+            var param={
+                Mname:$("#Mname").val(),
+                spec:$("#spec").val(),
+                category:$("#category").val(),
+                unit:$("#unit").val(),
+                price:$("#price").val()
+            };
+            $.ajax({
+                url:"/material/add",
+                type:"post",
+                data:param,
+                dataType:"text",
+                success:function () {
+                    layer.msg('添加成功', {
+                        icon: 6,
+                        time: 1000 //1秒关闭（如果不配置，默认是3秒）
+                    }, function () {
+                        $(".layui-input").val("");
+                    });
+                },
+                error:function () {
+                    layer.msg('执行出错！', { icon: 5, shift: 6, time: 2000 });
+                }
+            });
+            return false;
+        });
+    });
+</script>
+</body>
+
+</html>

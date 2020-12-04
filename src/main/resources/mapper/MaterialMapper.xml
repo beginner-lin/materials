@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace = "com.wangxiaolin.materials.mapper.MaterialMapper">
+    <!-- 查询表中所有的数据 -->
+    <select id="queryMaterialList" resultType="com.wangxiaolin.materials.entity.Material" >
+        select * from material
+    </select>
+    <!-- 根据ID查询表数据,用于修改-->
+    <select id="getMaterialById" parameterType="Integer" resultType="com.wangxiaolin.materials.entity.Material">
+        <!-- 数据库增加语句：#{}代表占位符 -->
+        select * from material where Mid=#{Mid}
+    </select>
+    <!-- 根据关键字keywords模糊查询,用于搜索功能-->
+    <select id="getMaterialByKeywords" parameterType="java.lang.String" resultType="com.wangxiaolin.materials.entity.Material">
+        <!-- 数据库增加语句：#{}代表占位符 -->
+        select * from material where 1=1
+        <if test="Keywords!= null and Keywords!= ''">
+            AND Mid LIKE concat('%',#{Keywords},'%') OR Mname LIKE concat('%',#{Keywords},'%') OR spec LIKE concat('%',#{Keywords},'%') OR  category LIKE concat('%',#{Keywords},'%') OR  unit LIKE concat('%',#{Keywords},'%') OR price  LIKE concat('%',#{Keywords},'%')
+        </if>
+    </select>
+    <!-- 根据ID修改表中数据-->
+    <update id="updateMaterial" parameterType="com.wangxiaolin.materials.entity.Material">
+        update  material set  Mname = #{Mname},spec=#{spec},category=#{category},unit=#{unit},price=#{price} where Mid = #{Mid}
+    </update>
+    <!-- 根据ID删除表数据 -->
+    <delete id="delMaterialById" parameterType="Integer">
+        delete from material where Mid = #{Mid}
+    </delete>
+    <!-- 根据IDs批量删除删除表数据 -->
+    <delete id="delMaterialByIds" parameterType="int">
+        delete from material where Mid in
+        <foreach item="item" collection="Mids" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+    <!-- 插入数据，这里ID是自动递增的，所以不需要插入 -->
+    <insert id="insertMaterial" parameterType="com.wangxiaolin.materials.entity.Material" >
+        insert into material(Mname,spec,category,unit,price) values(#{Mname},#{spec},#{category},#{unit},#{price})
+    </insert>
+</mapper>

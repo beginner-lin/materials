@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace = "com.wangxiaolin.materials.mapper.RestMapper">
+    <!-- 查询表中所有的数据 -->
+    <select id="queryRestList" resultType="com.wangxiaolin.materials.entity.Rest" >
+        select * from Rest
+    </select>
+    <!-- 根据ID查询表数据,用于修改-->
+    <select id="getRestById" parameterType="Integer" resultType="com.wangxiaolin.materials.entity.Rest">
+        <!-- 数据库增加语句：#{}代表占位符 -->
+        select * from Rest where Rest.Mid=#{Mid} and Rest.Rid=#{Rid}
+    </select>
+    <!-- 根据关键字keywords模糊查询,用于搜索功能-->
+    <select id="getRestByKeywords" parameterType="java.lang.String" resultType="com.wangxiaolin.materials.entity.Rest">
+        <!-- 数据库增加语句：#{}代表占位符 -->
+        select * from Rest where 1=1
+        <if test="Keywords!= null and Keywords!= ''">
+            AND Rest.Mid=(select material.Mid from material where material.Mname LIKE concat('%',#{Keywords},'%') ) OR Rest.Rid=(select repository.Rid from repository where repository.Rname LIKE concat('%',#{Keywords},'%')) OR Rest.count LIKE concat('%',#{Keywords},'%') OR Rest.value LIKE concat('%',#{Keywords},'%') OR Rest.remark LIKE concat('%',#{Keywords},'%')
+        </if>
+    </select>
+    <!-- 根据ID修改表中数据-->
+    <update id="updateRest" parameterType="com.wangxiaolin.materials.entity.Rest">
+        update  Rest set  Rest.count = #{count},Rest.value=#{value},Rest.remark=#{remark} where Rest.Mid = #{Mid} and Rest.Rid=#{Rid}
+    </update>
+    <!-- 根据ID删除表数据 -->
+    <delete id="delRestById" parameterType="Integer">
+        delete from Rest where Rest.Mid = #{Mid} and Rest.Rid=#{Rid}
+    </delete>
+    <!-- 插入数据，这里ID是自动递增的，所以不需要插入 -->
+    <insert id="insertRest" parameterType="com.wangxiaolin.materials.entity.Rest" >
+        insert into Rest(Rest.Mid,Rest.Rid,Rest.count,Rest.value,Rest.remark) values(#{Mid},#{Rid},#{count},#{value},#{remark})
+    </insert>
+</mapper>

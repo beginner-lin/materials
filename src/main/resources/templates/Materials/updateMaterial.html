@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>修改物资基本信息</title>
+</head>
+<body>
+<form id="form01" >
+    <p>
+        物资编号：<input type="text" id="Mid"  th:value="${material.Mid}" readonly="readonly" >
+    </p>
+    <p>
+        物资名称：<input type="text" id="Mname" th:value="${material.Mname}" >
+    </p>
+    <p>
+        规格型号：<input type="text" id="spec" th:value="${material.spec}" >
+    </p>
+    <p>
+        类别：<input type="text" id="category" th:value="${material.category}" >
+    </p>
+    <p>
+        计量单位：<input type="text" id="unit" th:value="${material.unit}" >
+    </p>
+    <p>
+        单价：<input type="text" id="price" th:value="${material.price}" >
+    </p>
+    <p>
+        <input type="button" id="submit" value="修改物资" >
+    </p>
+</form>
+<script type="text/javascript" src="/js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" >
+    $('#submit').on('click', function () {
+        var param={
+            Mid:$("#Mid").val(),
+            Mname:$("#Mname").val(),
+            spec:$("#spec").val(),
+            category:$("#category").val(),
+            unit:$("#unit").val(),
+            price:$("#price").val()
+        };
+        $.ajax({
+            url:"/material/update",
+            type:"post",
+            data:param,
+            dataType:"text",
+            success:function (data) {
+                alert(data);
+                $(location).attr('href','/material');
+            },
+            error:function () {
+                alert("execute error!");
+            }
+        });
+    });
+</script>
+</body>
+</html>

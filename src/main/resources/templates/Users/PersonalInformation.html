@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="UTF-8">
+    <title>个人信息</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+    <link rel="stylesheet" th:href="@{/css/font.css}" >
+    <!-- 也可以用href="../css/font.css"-->
+    <link rel="stylesheet" th:href="@{/css/xadmin.css}">
+    <!-- 也可以用src="../lib/layui/layui.js"-->
+    <script type="text/javascript" th:src="@{/lib/layui/layui.js}" charset="utf-8"></script>
+    <script type="text/javascript" th:src="@{/js/xadmin.js}"></script>
+</head>
+
+<body style="text-align: center;" >
+<div class="layui-fluid">
+    <div class="layui-row">
+        <form action="" method="post" class="layui-form layui-form-pane">
+            <input type="hidden" id="uId" th:value="${session.user.uId}" />
+            <table >
+                <tr>
+                    <td rowspan="4">
+                        <div class="layui-form-item">
+                            <div class="layui-input-inline">
+                                <div class="layui-upload-list" style="margin:0">
+                                    <img th:src="${session.user.image}" id="srcimgurl" class="layui-circle" width="190" height="190" >
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label for="uName" class="layui-form-label">用户名</label>
+                            <div class="layui-input-inline">
+                                <input type="text" id="uName" name="uName"
+                                       autocomplete="off" class="layui-input" th:value="${session.user.uName}" readonly="readonly" >
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">状态</label>
+                            <div class="layui-input-inline">
+                                <input th:if="${session.user.state} eq 1" type="text"  name="uName" value="已启用" autocomplete="off"
+                                       class="layui-input"  readonly="readonly" />
+                                <input th:if="${session.user.state} eq 0" type="text"  name="uName" value="已禁用" autocomplete="off"
+                                       class="layui-input"  readonly="readonly" />
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <label for="actualName" class="layui-form-label">真实姓名</label>
+                            <div class="layui-input-inline">
+                                <input type="text" id="actualName" name="actualName" autocomplete="off" class="layui-input"
+                                       th:value="${session.user.actualName}" readonly="readonly" >
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div for="Usex" class="layui-form-item">
+                            <label for="Usex" class="layui-form-label">性别</label>
+                            <div class="layui-input-inline">
+                                <input type="text" th:value="${session.user.UserSex}" id="Usex" name="Usex"
+                                       value="nan" autocomplete="off" class="layui-input"  readonly="readonly" />
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div class="layui-form-item layui-form-text">
+                            <label for="introduce" class="layui-form-label">个人简介</label>
+                            <div class="layui-input-block">
+                    <textarea placeholder="请输入个人简介..." id="introduce" name="introduce" class="layui-textarea"
+                              th:text="${session.user.introduce}" readonly="readonly"></textarea>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div class="layui-form-item">
+                            <input type="button"  class="layui-btn" value="确定" lay-submit="" lay-filter="sure" />
+                            <input type="button"  class="layui-btn" value="修改" lay-submit="" lay-filter="update"/>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>
+<script>
+    layui.config({
+        //路径问题参考网址https://blog.csdn.net/aGreySky/article/details/89236815
+        //在SpringBoot中，默认配置的/**映射到/static，所以不需要加/static
+        //springboot中配置了**导致加..
+        base: '../cropper/' //layui自定义layui组件目录
+    }).use(['form','layer'], function () {
+        var $ = layui.jquery
+            ,form = layui.form
+            ,layer= layui.layer;
+        //监听提交
+        form.on('submit(sure)', function(data){
+            var index = parent.layer.getFrameIndex(window.name);
+            parent.layer.close(index);
+        });
+        form.on('submit(update)', function(data){
+            xadmin.open('编辑','/user/update?uid='+$('#uId').val(),900,650)
+        });
+        $("input").click(function () {
+            layer.msg('不能在此处修改信息！',{time: 1500});
+        });
+        $("#introduce").click(function () {
+            layer.msg('不能在此处修改信息！',{time: 1500});
+        });
+        $("#srcimgurl").click(function () {
+            layer.msg('不能在此处修改信息！',{time: 1500});
+        });
+    });
+</script>
+</body>
+
+</html>

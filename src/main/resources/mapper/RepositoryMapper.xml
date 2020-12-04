@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace = "com.wangxiaolin.materials.mapper.RepositoryMapper">
+    <!-- 查询表中所有的数据 -->
+    <select id="queryRepositoryList" resultType="com.wangxiaolin.materials.entity.Repository" >
+        select * from repository
+    </select>
+    <!-- 根据ID查询表数据,用于修改-->
+    <select id="getRepositoryById" parameterType="Integer" resultType="com.wangxiaolin.materials.entity.Repository">
+        <!-- 数据库增加语句：#{}代表占位符 -->
+        select * from repository where Rid=#{Rid}
+    </select>
+    <!-- 根据关键字keywords模糊查询,用于搜索功能-->
+    <select id="getRepositoryByKeywords" parameterType="java.lang.String" resultType="com.wangxiaolin.materials.entity.Repository">
+        <!-- 数据库增加语句：#{}代表占位符 -->
+        select * from repository where 1=1
+        <if test="Keywords!= null and Keywords!= ''">
+            AND Rid LIKE concat('%',#{Keywords},'%') OR Rname LIKE concat('%',#{Keywords},'%') OR Remark LIKE concat('%',#{Keywords},'%')
+        </if>
+    </select>
+    <!-- 根据ID修改表中数据-->
+    <update id="updateRepository" parameterType="com.wangxiaolin.materials.entity.Repository">
+        update  repository set  Rname = #{Rname},Remark=#{Remark} where Rid = #{Rid}
+    </update>
+    <!-- 根据ID删除表数据 -->
+    <delete id="delRepositoryById" parameterType="Integer">
+        delete from repository where Rid = #{Rid}
+    </delete>
+    <!-- 根据IDs批量删除删除表数据 -->
+    <delete id="delRepositoryByIds" parameterType="int">
+        delete from repository where Rid in
+        <foreach item="item" collection="Rids" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+    <!-- 插入数据，这里ID是自动递增的，所以不需要插入 -->
+    <insert id="insertRepository" parameterType="com.wangxiaolin.materials.entity.Repository" >
+        insert into repository(Rname,Remark) values(#{Rname},#{Remark})
+    </insert>
+</mapper>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="UTF-8">
+    <title>添加入库信息</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+    <link rel="stylesheet" th:href="@{/css/font.css}" >
+    <link rel="stylesheet" th:href="@{/css/xadmin.css}">
+    <script type="text/javascript" th:src="@{/lib/layui/layui.js}" charset="utf-8"></script>
+    <script type="text/javascript" th:src="@{/js/xadmin.js}"></script>
+</head>
+
+<body>
+<div class="layui-fluid">
+    <div class="layui-row">
+        <form action="" method="post" class="layui-form layui-form-pane">
+            <div class="layui-form-item">
+                <label for="Mid" class="layui-form-label">
+                    <span class="x-red">*</span>物资名称</label>
+                <div class="layui-input-inline">
+                    <select id="Mid" name="Mid" class="valid">
+                        <option th:each="material : ${materials}" th:value="${material.Mid}" th:text="${material.Mname}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="Rid" class="layui-form-label">
+                    <span class="x-red">*</span>存放仓库</label>
+                <div class="layui-input-inline">
+                    <select id="Rid" name="Rid" class="valid" lay-filter="repositoryList">
+                        <option value="-1" >--请选择存放仓库-- </option>
+                        <option th:each="repository : ${repositories}" th:value="${repository.Rid}" th:text="${repository.Rname}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="count" class="layui-form-label">
+                    <span class="x-red">*</span>数量
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="count" name="count" required="" lay-verify="required"
+                           autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="value" class="layui-form-label">
+                    <span class="x-red">*</span>单价
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="value" name="value" required="" lay-verify="required"
+                           autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="user_Pid" class="layui-form-label">
+                    <span class="x-red">*</span>领取人</label>
+                <div class="layui-input-inline">
+                    <select id="user_Pid" name="user_Pid" class="valid"></select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="deal_Pid" class="layui-form-label">
+                    <span class="x-red">*</span>处理人</label>
+                <div class="layui-input-inline">
+                    <select id="deal_Pid" name="deal_Pid" class="valid"></select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="remark" class="layui-form-label">
+                    <span class="x-red">*</span>备注
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="remark" name="remark" required="" lay-verify="required"
+                           autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <button class="layui-btn" lay-submit="" lay-filter="add">添加出库信息</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    layui.use(['form','layer'], function(){
+        $ = layui.jquery;
+        var form = layui.form
+            ,layer = layui.layer;
+
+        //监听提交
+        form.on('submit(add)', function(data){
+            var param={
+                Mid:$("#Mid").val(),
+                Rid:$("#Rid").val(),
+                count:$("#count").val(),
+                value:$("#value").val(),
+                user_Pid:$("#user_Pid").val(),
+                deal_Pid:$("#deal_Pid").val(),
+                remark:$("#remark").val()
+            };
+            $.ajax({
+                url:"/outputr/add",
+                type:"post",
+                data:param,
+                dataType:"text",
+                success:function () {
+                    layer.msg('添加成功', {
+                        icon: 6,
+                        time: 1000 //1秒关闭（如果不配置，默认是3秒）
+                    }, function () {
+                        location.reload();
+                    });
+                },
+                error:function () {
+                    layer.msg('执行出错！', { icon: 5, shift: 6, time: 2000 });
+                }
+            });
+            return false;
+        });
+
+        form.on('select(repositoryList)', function(data){
+            var rid = data.value;
+            $("#user_Pid").empty();
+            form.render("select");
+            $("#deal_Pid").empty();
+            form.render("select");
+            if(rid != -1){
+                var param = {
+                    Ptype:"领取人",
+                    Rid:rid
+                };
+                var param2 = {
+                    Ptype:"处理人",
+                    Rid:rid
+                };
+                $("#user_Pid").empty();
+                form.render("select");
+                $("#deal_Pid").empty();
+                form.render("select");
+                $.post("/person/getPersonByRid",param,function(result){
+                    for(var i = 0; i <result.data.length; i++) {//添加option元素
+                        $("#user_Pid").append("<option value='" + result.data[i].pid + "'>" + result.data[i].pname + "</option>");
+                        form.render('select');
+                    }
+                });
+                $.post("/person/getPersonByRid",param2,function(result02){
+                    for(var i = 0; i <result02.data.length; i++) {//添加option元素
+                        $("#deal_Pid").append("<option value='" + result02.data[i].pid + "'>" + result02.data[i].pname + "</option>");
+                        form.render('select');
+                    }
+                });
+            }
+        });
+    });
+</script>
+</body>
+
+</html>
